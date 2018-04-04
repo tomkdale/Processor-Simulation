@@ -15,24 +15,27 @@ class process //TODO create fully functioning process object
 public:
 	process();
 	~process();
-	int getTimeRemaining();
+	int actualTimeRemaining();
+	int estimatedTimeRemaining();
 	int startTime();
 	int getPID();
 	int processSomeTime(int timeProcessed);
 	void completed();
 	int timeWaiting(int currentTime);
 private:
-	int PID;//TODO and a bunch of otherstuff
-	int timeRemaining;
+	int PID, arrivalTime, cpuTime1, iO1, cpuTime2, iO2; // initialized data
 };
 
 process::process()
 {
+	//TODO initialize data 
 }
-int process::getTimeRemaining() {//returns time remaining to be processed
-	
-	timeRemaining = rand() % 10;
-	return timeRemaining;
+int process::actualTimeRemaining() {//returns time remaining to be processed
+	return cpuTime1 + iO1 + cpuTime2 + iO2;
+
+}
+int process::estimatedTimeRemaining() {
+
 }
 int process::startTime() {//returns the time that the process first enters the queue
 	return rand() % 100;
@@ -43,9 +46,9 @@ int process::getPID() {
 int process::processSomeTime(int timeProcessed)//should decrement the timeRemaining because it was half processed, return 0 if finished
 {
 	cout << "Process " << PID << " processed for " << timeProcessed;
-	if(timeRemaining-timeProcessed <= 0) cout << ". Completed!" << endl;
-	else cout << ". Did not complete, " << timeRemaining - timeProcessed << " remaining." << endl;
-	return timeRemaining-timeProcessed;
+	if(this->actualTimeRemaining()-timeProcessed <= 0) cout << ". Completed!" << endl;
+	else cout << ". Did not complete, " << this->actualTimeRemaining() - timeProcessed << " remaining." << endl;
+	return this->actualTimeRemaining-timeProcessed;
 }
 void process::completed() {
 	cout << "Process " << PID << " completed!" << endl;
@@ -64,8 +67,10 @@ vector<process> initializeFile() {//returns a huge list of processes that were r
 }
 
 
-
 int main() {
+
+	//TODO: insert code to import processors and load them into imput file
+
 	vector<process> inputFile = initializeFile();
 
 	vector<process> STR;//shortest remaining time first
@@ -74,15 +79,26 @@ int main() {
 	queue<process> RR5;//round robin 5
 	queue<process> RR10;//round robin 10
 	queue<process> FCFS;//first come first serve
+
 	//waterfalling processor priority need a time limit for when processes move into the next queue
 	int STRtimeLimit = 100;
 	int RR1timeLimit = 200;
 	int RR3timeLimit = 400;
 	int RR5timeLimit = 500;
 	int RR10timeLimit = 1000;
-	vector<int> processorTime = { 0,0,0,0,0,0 };
-	while (!inputFile.empty()) {//loop until inputFile is completley empty of future process to deal with
 
+	vector<int> processorTime = { 0,0,0,0,0,0 };
+
+	//here are dataAnalysis values-------------------
+	int totalthroughput = 0; //how many processes
+	int totalTurnaround = 0; //how long all processes take
+	int totalWaitTime = 0; //times spent in queues
+	int totalResponseTime = 0; //time from entrance to queue to first processing
+	int totalContextSwitchTime = 0; //time processors take to context switch
+	int processorUtilization = 0; //time processor queues are spent empty
+	//------------------------------------------------
+
+	while (!(inputFile.empty() && STR.empty() && RR1.empty() && RR3.empty() && RR5.empty() && RR10.empty())) {//loop until processes are completed
 		//find processor that is furthest back in time
 		int lowest = 0;
 		for (int i = 0; i < 6; i++){
@@ -103,17 +119,17 @@ int main() {
 			}
 			shortestTimeRemaining = 0; //find shortest time remaining in STR queue
 			for (unsigned int i = 0; i < STR.size(); i++) {
-				if (STR.at(i).getTimeRemaining() < STR.at(shortestTimeRemaining).getTimeRemaining()) shortestTimeRemaining = i;
+				if (STR.at(i).actualTimeRemaining() < STR.at(shortestTimeRemaining).actualTimeRemaining()) shortestTimeRemaining = i;
 				i++;
 			}
 			//load in all processes that will enter queue during processing time of the current process
-			while (inputFile.back().startTime() < STR.at(shortestTimeRemaining).getTimeRemaining() + processorTime.at(0)) {
+			while (inputFile.back().startTime() < STR.at(shortestTimeRemaining).actualTimeRemaining() + processorTime.at(0)) {
 				if (inputFile.empty()) break;
 				int firstProcessTime = inputFile.back().startTime() - processorTime.at(0);
 				STR.push_back(inputFile.back());//load in process from inputFile
 				inputFile.pop_back();//remove that process from inputFile
-				int timeFirstProcessRemaining = STR.at(shortestTimeRemaining).getTimeRemaining() - firstProcessTime; //how much of the first process remains at new process entering queue time
-				if (STR.back().getTimeRemaining() < timeFirstProcessRemaining ) {//the process that entered is shorter than the current process
+				int timeFirstProcessRemaining = STR.at(shortestTimeRemaining).actualTimeRemaining() - firstProcessTime; //how much of the first process remains at new process entering queue time
+				if (STR.back().actualTimeRemaining() < timeFirstProcessRemaining ) {//the process that entered is shorter than the current process
 					if (STR.at(shortestTimeRemaining).processSomeTime(firstProcessTime)) {
 						cout << "Finished processing PID#" << STR.at(shortestTimeRemaining).getPID() << " in shortest time remaining processor." << endl;
 					}
@@ -121,7 +137,7 @@ int main() {
 					goto label;//process was replaced so end continuation of processing on this step
 					}
 				}
-			processorTime.at(0) += STR.at(shortestTimeRemaining).getTimeRemaining();//add discrete event time jump for this processor
+			processorTime.at(0) += STR.at(shortestTimeRemaining).actualTimeRemaining();//add discrete event time jump for this processor
 			cout << "Finished processing PID#" << STR.at(shortestTimeRemaining).getPID() << " in shortest time remaining processor." << endl;
 			STR.at(shortestTimeRemaining).completed();//finish processing first process
 			label:
@@ -220,7 +236,7 @@ int main() {
 
 
 		case 5:  //finish next process in FCFS
-			processorTime.at(5) += FCFS.back().getTimeRemaining();
+			processorTime.at(5) += FCFS.back().actualTimeRemaining();
 			FCFS.back().completed();
 			FCFS.pop();
 			break;
@@ -230,5 +246,17 @@ int main() {
 	}
 
 	cout << "All processes finished.";
+
+	//TODO: output test data to excel. Turn the below totals into averages
+	totalthroughput;
+	totalTurnaround;
+	totalWaitTime;
+	totalResponseTime;
+	totalContextSwitchTime;
+	processorUtilization;
+
+
+
+	
 	return 0;
 }
