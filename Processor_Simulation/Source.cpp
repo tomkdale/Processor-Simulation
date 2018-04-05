@@ -8,58 +8,10 @@
 #include <queue>
 #include <vector>
 #include <random>
+#include "times.h"
+#include "process.h"
 using namespace std;
 
-class process //TODO create fully functioning process object
-{
-public:
-	process();
-	~process();
-	int actualTimeRemaining();
-	int estimatedTimeRemaining();
-	int startTime();
-	int getPID();
-	int processSomeTime(int timeProcessed);
-	void completed();
-	int timeWaiting(int currentTime);
-private:
-	int PID, arrivalTime, cpuTime1, iO1, cpuTime2, iO2; // initialized data
-};
-
-process::process()
-{
-	//TODO initialize data 
-}
-int process::actualTimeRemaining() {//returns time remaining to be processed
-	return cpuTime1 + iO1 + cpuTime2 + iO2;
-
-}
-int process::estimatedTimeRemaining() {
-
-}
-int process::startTime() {//returns the time that the process first enters the queue
-	return rand() % 100;
-}
-int process::getPID() {
-	return PID;
-}
-int process::processSomeTime(int timeProcessed)//should decrement the timeRemaining because it was half processed, return 0 if finished
-{
-	cout << "Process " << PID << " processed for " << timeProcessed;
-	if(this->actualTimeRemaining()-timeProcessed <= 0) cout << ". Completed!" << endl;
-	else cout << ". Did not complete, " << this->actualTimeRemaining() - timeProcessed << " remaining." << endl;
-	return this->actualTimeRemaining-timeProcessed;
-}
-void process::completed() {
-	cout << "Process " << PID << " completed!" << endl;
-}
-int process::timeWaiting(int currentTime)
-{
-	return 0;
-}
-process::~process()
-{
-}
 
 vector<process> initializeFile() {//returns a huge list of processes that were read in from the file
 	vector<process> nothing;
@@ -68,7 +20,6 @@ vector<process> initializeFile() {//returns a huge list of processes that were r
 
 
 int main() {
-
 	//TODO: insert code to import processors and load them into imput file
 
 	vector<process> inputFile = initializeFile();
@@ -79,13 +30,6 @@ int main() {
 	queue<process> RR5;//round robin 5
 	queue<process> RR10;//round robin 10
 	queue<process> FCFS;//first come first serve
-
-	//waterfalling processor priority need a time limit for when processes move into the next queue
-	int STRtimeLimit = 100;
-	int RR1timeLimit = 200;
-	int RR3timeLimit = 400;
-	int RR5timeLimit = 500;
-	int RR10timeLimit = 1000;
 
 	vector<int> processorTime = { 0,0,0,0,0,0 };
 
@@ -128,8 +72,9 @@ int main() {
 				int firstProcessTime = inputFile.back().startTime() - processorTime.at(0);
 				STR.push_back(inputFile.back());//load in process from inputFile
 				inputFile.pop_back();//remove that process from inputFile
-				int timeFirstProcessRemaining = STR.at(shortestTimeRemaining).actualTimeRemaining() - firstProcessTime; //how much of the first process remains at new process entering queue time
-				if (STR.back().actualTimeRemaining() < timeFirstProcessRemaining ) {//the process that entered is shorter than the current process
+				int timeFirstProcessRemaining = STR.at(shortestTimeRemaining).estimatedTimeRemaining() - firstProcessTime; //how much of the first process remains at new process entering queue time
+				if (STR.back().estimatedTimeRemaining() < timeFirstProcessRemaining ) {//the process that entered is shorter than the current process
+					processorTime.at(0) += contextSwitch;
 					if (STR.at(shortestTimeRemaining).processSomeTime(firstProcessTime)) {
 						cout << "Finished processing PID#" << STR.at(shortestTimeRemaining).getPID() << " in shortest time remaining processor." << endl;
 					}
@@ -139,7 +84,6 @@ int main() {
 				}
 			processorTime.at(0) += STR.at(shortestTimeRemaining).actualTimeRemaining();//add discrete event time jump for this processor
 			cout << "Finished processing PID#" << STR.at(shortestTimeRemaining).getPID() << " in shortest time remaining processor." << endl;
-			STR.at(shortestTimeRemaining).completed();//finish processing first process
 			label:
 			//check ages in queue
 			for (unsigned int i = 0; i < STR.size(); i++) {
@@ -155,11 +99,11 @@ int main() {
 			if (RR1.front().processSomeTime(1) == 0 ){//process 1 second and check to see if it was completed
 				cout << "Finished processing PID#" << RR1.front().getPID() << " in round robin processor" << endl;
 				RR1.pop();
-				processorTime.at(1) += 1;
+				processorTime.at(1) += RR1ProcessTime + contextSwitch;
 
 			}
 			else {//if process not completed then first check if it is too old for the queue
-				processorTime.at(1) += 1;
+				processorTime.at(1) += RR1ProcessTime + contextSwitch;
 				if (RR1.front().timeWaiting(processorTime.at(1)) > RR1timeLimit) {
 					RR3.push(RR1.front());//move process to RR3 processor queue
 					RR1.pop(); // delete old iteration of this process
@@ -178,10 +122,10 @@ int main() {
 			if (processTimeOverlap <= 0) {//process 3 second and check to see if it was completed
 				cout << "Finished processing PID#" << RR3.front().getPID() << " in round robin processor" << endl;
 				RR3.pop();
-				processorTime.at(2) += 3 + processTimeOverlap; //increment by 3 or a smaller number if process finished early
+				processorTime.at(2) += RR3ProcessTime + contextSwitch + processTimeOverlap; //increment by RR3 time or a smaller number if process finished early
 			}
 			else {//if process not completed then first check if it is too old for the queue
-				processorTime.at(2) += 3;
+				processorTime.at(2) += RR3ProcessTime + contextSwitch;
 				if (RR3.front().timeWaiting(processorTime.at(2)) > RR3timeLimit) {
 					RR5.push(RR3.front());//move process to RR5 processor queue
 					RR3.pop(); // delete old iteration of this process
@@ -198,10 +142,10 @@ int main() {
 			if (processTimeOverlap <= 0) {//process 5 second and check to see if it was completed
 				cout << "Finished processing PID#" << RR5.front().getPID() << " in round robin processor" << endl;
 				RR5.pop();
-				processorTime.at(3) += 5 + processTimeOverlap; //increment by 3 or a smaller number if process finished early
+				processorTime.at(3) += RR5ProcessTIme + contextSwitch + processTimeOverlap; //increment by RR5 time or a smaller number if process finished early
 			}
 			else {//if process not completed then first check if it is too old for the queue
-				processorTime.at(3) += 5;
+				processorTime.at(3) += RR5ProcessTIme + contextSwitch;
 				if (RR5.front().timeWaiting(processorTime.at(3)) > RR5timeLimit) {
 					RR10.push(RR5.front());//move process to RR10 processor queue
 					RR5.pop(); // delete old iteration of this process
@@ -219,10 +163,10 @@ int main() {
 			if (processTimeOverlap <= 0) {//process 10 second and check to see if it was completed
 				cout << "Finished processing PID#" << RR10.front().getPID() << " in round robin processor" << endl;
 				RR10.pop();
-				processorTime.at(4) += 10 + processTimeOverlap; //increment by 3 or a smaller number if process finished early
+				processorTime.at(4) += RR10ProcessTime + contextSwitch + processTimeOverlap; //increment by RR10 time or a smaller number if process finished early
 			}
 			else {//if process not completed then first check if it is too old for the queue
-				processorTime.at(4) += 10;
+				processorTime.at(4) += RR10ProcessTime + contextSwitch;
 				if (RR10.front().timeWaiting(processorTime.at(4)) > RR10timeLimit) {
 					FCFS.push(RR10.front());//move process to RR5 processor queue
 					RR10.pop(); // delete old iteration of this process
@@ -237,7 +181,6 @@ int main() {
 
 		case 5:  //finish next process in FCFS
 			processorTime.at(5) += FCFS.back().actualTimeRemaining();
-			FCFS.back().completed();
 			FCFS.pop();
 			break;
 		}
