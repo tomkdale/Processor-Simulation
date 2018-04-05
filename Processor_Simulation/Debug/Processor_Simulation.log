@@ -1,2 +1,3 @@
 ﻿  Source.cpp
-  Processor_Simulation.vcxproj -> C:\Users\Thomas\Desktop\Processor-Simulation\Processor_Simulation\Debug\Processor_Simulation.exe
+c:\users\thomas\desktop\processor-simulation\processor_simulation\source.cpp(197): error C2374: 'avgTurnaround': redefinition; multiple initialization
+  c:\users\thomas\desktop\processor-simulation\processor_simulation\source.cpp(196): note: see declaration of 'avgTurnaround'

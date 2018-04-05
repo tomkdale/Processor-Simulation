@@ -8,7 +8,9 @@ public:
 	int startTime();
 	int getPID();
 	int processSomeTime(int timeProcessed);
-	int timeWaiting(int currentTime);
+	int age(int currentTime);
+	int waitTime(int currentTime);
+	int turnaroundTime(int currentTime);
 private:
 	int PID, arrivalTime, cpuTime1, iO1, cpuTime2, iO2; // initialized data
 	int timePreviouslyProcessed = 0;
@@ -38,7 +40,7 @@ int process::processSomeTime(int timeProcessed)//should decrement the timeRemain
 	//positive number means process still has time to go
 	//negative number means it finished that much before the processor expected
 }
-int process::timeWaiting(int currentTime)
+int process::age(int currentTime)
 {
 	return currentTime - arrivalTime;
 }
