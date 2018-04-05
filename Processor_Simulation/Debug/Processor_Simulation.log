@@ -1,3 +1,2 @@
 ﻿  Source.cpp
-c:\users\tdale19\desktop\processor-simulation\processor_simulation\source.cpp(51): error C3867: 'process::actualTimeRemaining': non-standard syntax; use '&' to create a pointer to member
-c:\users\tdale19\desktop\processor-simulation\processor_simulation\source.cpp(51): error C2296: '-': illegal, left operand has type 'int (__thiscall process::* )(void)'
+  Processor_Simulation.vcxproj -> C:\Users\Thomas\Desktop\Processor-Simulation\Processor_Simulation\Debug\Processor_Simulation.exe
