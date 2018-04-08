@@ -5,7 +5,7 @@
 //values for length of RoundRobin processors 
 #define RR1ProcessTime 10
 #define RR3ProcessTime 30
-#define RR5ProcessTIme 50
+#define RR5ProcessTime 50
 #define RR10ProcessTime 100
 
 //Time limit before process is moved down into next processor

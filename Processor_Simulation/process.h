@@ -20,6 +20,7 @@ public:
 	void setiO1(int iO1);
 	void setiO2(int iO2);
 	void setArrivalTime(int aTime);
+	void setTransferTime(int tTime);
 
 	//Getters
 	int getPID();
@@ -27,8 +28,10 @@ public:
 	int getcpuTime2();
 	int getiO1();
 	int getiO2();
+	int getTransferTime();
 private:
 	int PID, arrivalTime, cpuTime1, iO1, cpuTime2, iO2; // initialized data
+	int transferTime; //time at which process has waterfalled into new queue
 	int timePreviouslyProcessed = 0;
 	bool hasResponded = false;
 };
@@ -63,6 +66,11 @@ void process::setArrivalTime(int aTime) {
 	this->arrivalTime = aTime;
 }
 
+inline void process::setTransferTime(int tTime)
+{
+	transferTime = tTime;
+}
+
 //GETTERS
 int process::getcpuTime1()
 {
@@ -79,6 +87,11 @@ int process::getiO1()
 int process::getiO2()
 {
 	return iO2;
+}
+
+inline int process::getTransferTime()
+{
+	return transferTime;
 }
 
 int process::actualTimeRemaining() {//returns time remaining to be processed

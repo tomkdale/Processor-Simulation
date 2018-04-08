@@ -1,2 +1,7 @@
 ﻿  Source.cpp
+c:\users\thomas\desktop\processor-simulation\processor_simulation\source.cpp(139): warning C4018: '>=': signed/unsigned mismatch
+c:\users\thomas\desktop\processor-simulation\processor_simulation\source.cpp(178): warning C4018: '>=': signed/unsigned mismatch
+c:\users\thomas\desktop\processor-simulation\processor_simulation\source.cpp(218): warning C4018: '>=': signed/unsigned mismatch
+c:\users\thomas\desktop\processor-simulation\processor_simulation\source.cpp(257): warning C4018: '>=': signed/unsigned mismatch
+c:\users\thomas\desktop\processor-simulation\processor_simulation\source.cpp(77): warning C4101: 'processTimeOverlap': unreferenced local variable
   Processor_Simulation.vcxproj -> C:\Users\Thomas\Desktop\Processor-Simulation\Processor_Simulation\Debug\Processor_Simulation.exe
