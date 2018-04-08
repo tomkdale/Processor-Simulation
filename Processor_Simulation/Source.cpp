@@ -16,7 +16,7 @@ using namespace std;
 
 vector<process> initializeFile() {//returns a huge list of processes that were read in from the file
 
-	vector<process> process(1000);
+	vector<process> process(100);//TODO make a thousand not a hundred processes
 
 	int a;
 	int b;
@@ -29,7 +29,7 @@ vector<process> initializeFile() {//returns a huge list of processes that were r
 	ifstream inFile;
 	inFile.open("times.txt");
 
-	for (int i = 0; i < 1000; i++)
+	for (int i = 99; i >= 0 ; i--)
 	{
 		inFile >> a >> b >> c >> d >> e;
 
@@ -52,10 +52,6 @@ vector<process> initializeFile() {//returns a huge list of processes that were r
 
 
 int main() {
-	//TODO: insert code to import processors and load them into imput file
-
-
-
 	vector<process> inputFile = initializeFile();
 
 	vector<process> STR;//shortest remaining time first
@@ -76,7 +72,7 @@ int main() {
 	int totalNumProcesses = inputFile.size();
 	//------------------------------------------------
 
-	while (!(inputFile.empty() && STR.empty() && RR1.empty() && RR3.empty() && RR5.empty() && RR10.empty())) {//loop until processes are completed
+	while (!(inputFile.empty())) {//loop until processes are completed
 		//find processor that is furthest back in time
 		int lowest = 0;
 		for (int i = 0; i < 6; i++){
@@ -291,7 +287,7 @@ int main() {
 			FCFS.pop();
 			break;
 		}
-		cout << " Processor " << lowest << " is now at time " << processorTime.at(lowest) << endl;
+		//cout << " Processor " << lowest << " is now at time " << processorTime.at(lowest) << endl;
 		
 	}
 
