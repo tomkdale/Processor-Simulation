@@ -22,6 +22,7 @@ vector<process> initializeFile() {//returns a huge list of processes that were r
 	int b;
 	int c;
 	int d;
+	int e;
 
 	int PID = 0;
 
@@ -30,7 +31,7 @@ vector<process> initializeFile() {//returns a huge list of processes that were r
 
 	for (int i = 0; i < 1000; i++)
 	{
-		inFile >> a >> b >> c >> d;
+		inFile >> a >> b >> c >> d >> e;
 
 
 		process[i].setcpuTime1(a);
@@ -38,6 +39,7 @@ vector<process> initializeFile() {//returns a huge list of processes that were r
 		process[i].setcpuTime2(c);
 		process[i].setiO2(d);
 		process[i].setPID(PID);
+		process[i].setArrivalTime(e);
 
 		//INCREMENT FOR NEXT PID #
 		PID++;
