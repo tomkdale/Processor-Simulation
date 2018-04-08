@@ -8,19 +8,51 @@
 #include <queue>
 #include <vector>
 #include <random>
+#include <fstream>
 #include "times.h"
 #include "process.h"
 using namespace std;
 
 
 vector<process> initializeFile() {//returns a huge list of processes that were read in from the file
-	vector<process> nothing;
-	return nothing;
+
+	vector<process> process(1000);
+
+	int a;
+	int b;
+	int c;
+	int d;
+
+	int PID = 0;
+
+	ifstream inFile;
+	inFile.open("times.txt");
+
+	for (int i = 0; i < 1000; i++)
+	{
+		inFile >> a >> b >> c >> d;
+
+
+		process[i].setcpuTime1(a);
+		process[i].setiO1(b);
+		process[i].setcpuTime2(c);
+		process[i].setiO2(d);
+		process[i].setPID(PID);
+
+		//INCREMENT FOR NEXT PID #
+		PID++;
+	}
+
+	inFile.close();
+
+	return process;
 }
 
 
 int main() {
 	//TODO: insert code to import processors and load them into imput file
+
+
 
 	vector<process> inputFile = initializeFile();
 

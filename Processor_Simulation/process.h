@@ -6,12 +6,26 @@ public:
 	int actualTimeRemaining();
 	int estimatedTimeRemaining();
 	int startTime();
-	int getPID();
+
 	int processSomeTime(int timeProcessed);
 	int age(int currentTime);
 	int waitTime(int currentTime);
 	int turnaroundTime(int currentTime);
 	bool isFirstResponse();
+
+	//Setters
+	void setPID(int PID);
+	void setcpuTime1(int cpuTime1);
+	void setcpuTime2(int cpuTime2);
+	void setiO1(int iO1);
+	void setiO2(int iO2);
+	//Getters
+	int getPID();
+	int getcpuTime1();
+	int getcpuTime2();
+	int getiO1();
+	int getiO2();
+
 private:
 	int PID, arrivalTime, cpuTime1, iO1, cpuTime2, iO2; // initialized data
 	int timePreviouslyProcessed = 0;
@@ -20,8 +34,48 @@ private:
 
 process::process()
 {
-	//TODO initialize data 
 }
+
+//SET ALL OF THE VALUES WE WANT FROM THIS LIST
+void process::setPID(int PID)
+{
+	this->PID = PID;
+}
+void process::setcpuTime1(int cpuTime1)
+{
+	this->cpuTime1 = cpuTime1;
+}
+void process::setcpuTime2(int cpuTime2)
+{
+	this->cpuTime2 = cpuTime2;
+}
+void process::setiO1(int iO1)
+{
+	this->iO1 = iO1;
+}
+void process::setiO2(int iO2)
+{
+	this->iO2 = iO2;
+}
+
+//GETTERS
+int process::getcpuTime1()
+{
+	return cpuTime1;
+}
+int process::getcpuTime2()
+{
+	return cpuTime2;
+}
+int process::getiO1()
+{
+	return iO1;
+}
+int process::getiO2()
+{
+	return iO2;
+}
+
 int process::actualTimeRemaining() {//returns time remaining to be processed
 	return cpuTime1 + iO1 + cpuTime2 + iO2 - timePreviouslyProcessed;
 }
