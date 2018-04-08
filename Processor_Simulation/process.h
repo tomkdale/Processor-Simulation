@@ -19,13 +19,14 @@ public:
 	void setcpuTime2(int cpuTime2);
 	void setiO1(int iO1);
 	void setiO2(int iO2);
+	void setArrivalTime(int aTime);
+
 	//Getters
 	int getPID();
 	int getcpuTime1();
 	int getcpuTime2();
 	int getiO1();
 	int getiO2();
-
 private:
 	int PID, arrivalTime, cpuTime1, iO1, cpuTime2, iO2; // initialized data
 	int timePreviouslyProcessed = 0;
@@ -56,6 +57,10 @@ void process::setiO1(int iO1)
 void process::setiO2(int iO2)
 {
 	this->iO2 = iO2;
+}
+
+void process::setArrivalTime(int aTime) {
+	this->arrivalTime = aTime;
 }
 
 //GETTERS
