@@ -77,7 +77,6 @@ int main() {
 		int lowest = 0;
 		for (int i = 0; i < 6; i++){
 			if (processorTime.at(i) < processorTime.at(lowest)) lowest = i;
-			i++;
 		}
 		//run the processor furthest back in time
 		int shortestTimeRemaining;
@@ -103,16 +102,17 @@ int main() {
 				int firstProcessTime = inputFile.back().startTime() - processorTime.at(0);//amount of time processing before shorter process enters
 				STR.push_back(inputFile.back());//load in process from inputFile
 				inputFile.pop_back();//remove that process from inputFile
-				int timeFirstProcessRemaining = STR.at(shortestTimeRemaining).estimatedTimeRemaining() - firstProcessTime; //how much of the first process remains at new process entering queue time
-				if (STR.back().estimatedTimeRemaining() < timeFirstProcessRemaining ) {//the process that entered is shorter than the current process
+				//TODO change actualTimeRemaining to estimated time remaining below
+				int timeFirstProcessRemaining = STR.at(shortestTimeRemaining).actualTimeRemaining() - firstProcessTime; //how much of the first process remains at new process entering queue time
+				if (STR.front().estimatedTimeRemaining() < timeFirstProcessRemaining ) {//the process that entered is shorter than the current process
 					processorTime.at(0) += contextSwitch;
 					totalContextSwitchTime += contextSwitch;
 					processorTime.at(0) += firstProcessTime;//add discrete event time jump for this processor
 					if (STR.at(shortestTimeRemaining).processSomeTime(firstProcessTime) <= 0) {//if the process was completed before interruption
 						
 						cout << "Finished processing PID#" << STR.at(shortestTimeRemaining).getPID() << " in shortest time remaining processor." << endl;
-						totalWaitTime += STR.back().waitTime(processorTime.at(0));
-						totalTurnaround += STR.back().turnaroundTime(processorTime.at(0));
+						totalWaitTime += STR.front().waitTime(processorTime.at(0));
+						totalTurnaround += STR.front().turnaroundTime(processorTime.at(0));
 						STR.erase(STR.begin() + shortestTimeRemaining); // delete old iteration of this process
 					}
 					if (STR.at(shortestTimeRemaining).isFirstResponse()) {
@@ -126,8 +126,8 @@ int main() {
 			if (STR.at(shortestTimeRemaining).isFirstResponse()) {
 				totalResponseTime += STR.at(shortestTimeRemaining).age(processorTime.at(0));
 			}
-			totalWaitTime += STR.back().waitTime(processorTime.at(0));
-			totalTurnaround += STR.back().turnaroundTime(processorTime.at(0));
+			totalWaitTime += STR.front().waitTime(processorTime.at(0));
+			totalTurnaround += STR.front().turnaroundTime(processorTime.at(0));
 			STR.erase(STR.begin() + shortestTimeRemaining); // delete old iteration of this process
 			label:
 			//check ages in queue
@@ -150,7 +150,7 @@ int main() {
 				totalResponseTime += RR1.front().age(processorTime.at(1));
 			}
 			if (RR1.front().processSomeTime(RR10ProcessTime) <= 0 ){//process 1 second and check to see if it was completed
-				cout << "Finished processing PID#" << RR1.front().getPID() << " in round robin processor" << endl;
+				cout << "Finished processing PID#" << RR1.front().getPID() << " in round robin 1 processor" << endl;
 
 				totalWaitTime += FCFS.back().waitTime(processorTime.at(1));
 				totalTurnaround += FCFS.back().turnaroundTime(processorTime.at(1));
@@ -185,7 +185,7 @@ int main() {
 			}
 			processTimeOverlap = RR3.front().processSomeTime(RR3ProcessTime);//overlap is the difference of process remaining and the amount that was processed
 			if (processTimeOverlap <= 0) {//process 3 second and check to see if it was completed
-				cout << "Finished processing PID#" << RR3.front().getPID() << " in round robin processor" << endl;
+				cout << "Finished processing PID#" << RR3.front().getPID() << " in round robin 3 processor" << endl;
 
 				totalWaitTime += FCFS.back().waitTime(processorTime.at(2));
 				totalTurnaround += FCFS.back().turnaroundTime(processorTime.at(2));
@@ -217,7 +217,7 @@ int main() {
 			}
 			processTimeOverlap = RR5.front().processSomeTime(RR5ProcessTIme);//overlap is the difference of process remaining and the amount that was processed
 			if (processTimeOverlap <= 0) {//process 5 second and check to see if it was completed
-				cout << "Finished processing PID#" << RR5.front().getPID() << " in round robin processor" << endl;
+				cout << "Finished processing PID#" << RR5.front().getPID() << " in round robin 5 processor" << endl;
 
 				totalWaitTime += FCFS.back().waitTime(processorTime.at(3));
 				totalTurnaround += FCFS.back().turnaroundTime(processorTime.at(3));
@@ -250,7 +250,7 @@ int main() {
 			}
 			processTimeOverlap = RR10.front().processSomeTime(RR10ProcessTime);//overlap is the difference of process remaining and the amount that was processed
 			if (processTimeOverlap <= 0) {//process 10 second and check to see if it was completed
-				cout << "Finished processing PID#" << RR10.front().getPID() << " in round robin processor" << endl;
+				cout << "Finished processing PID#" << RR10.front().getPID() << " in round robin 10 processor" << endl;
 
 				totalWaitTime += RR10.back().waitTime(processorTime.at(4));
 				totalTurnaround += RR10.back().turnaroundTime(processorTime.at(4));
