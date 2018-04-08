@@ -4,7 +4,7 @@
 //---------------------------------------------
 #include <iostream>
 #include <algorithm>
-#include "string.h"
+#include <string>
 #include <queue>
 #include <vector>
 #include <random>
@@ -38,12 +38,20 @@ vector<process> initializeFile() {//returns a huge list of processes that were r
 	return process;
 }
 
+void printToExcel(ofstream &outdata, int testNum, int turnAround, int wait, int response)
+{
+	outdata << to_string(testNum) + "," + to_string(turnAround) + "," + to_string(wait) + "," + to_string(response) << endl; //Write data to corrasponding columns
+}
 
 int main() {
-	int contextSwitch = 2; // time taken in a processor to context switch
+
+	ofstream outdata;//object to write to .csv file
+	outdata.open("DataCollection.csv", ios::app);//loacte/create file
+
+	int contextSwitch = 0; // time taken in a processor to context switch
 	int RRtimeFactor = 10;//factor that Round robin time quantums change
-	int timeLimitFactor = 50;//factor that time limit factors change
-	for (int q = 0; q < 20; q++) {
+	int timeLimitFactor = 170;//factor that time limit factors change
+	for (int q = 0; q < 50; q++) {
 		//values for length of RoundRobin processors 
 		int RR1ProcessTime = 1 * RRtimeFactor;
 		int RR3ProcessTime = 3 * RRtimeFactor;
@@ -327,10 +335,10 @@ int main() {
 		processorUtilization;
 
 		//OUTPUT DATA HERE
+		printToExcel(outdata, timeLimitFactor, avgTurnaround, avgWaitTime, avgResponse);
 
 
-
-		timeLimitFactor += 50;
+		contextSwitch += 10;
 	}
 
 	
