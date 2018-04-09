@@ -48,15 +48,15 @@ int main() {
 	ofstream outdata;//object to write to .csv file
 	outdata.open("DataCollection.csv", ios::app);//loacte/create file
 
-	int contextSwitch = 0; // time taken in a processor to context switch
-	int RRtimeFactor = 10;//factor that Round robin time quantums change
+	int contextSwitch = 10; // time taken in a processor to context switch
+	int RRtimeFactor = 5;//factor that Round robin time quantums change
 	int timeLimitFactor = 170;//factor that time limit factors change
-	for (int q = 0; q < 50; q++) {
+	for (int q = 0; q < 20; q++) {
 		//values for length of RoundRobin processors 
 		int RR1ProcessTime = 1 * RRtimeFactor;
-		int RR3ProcessTime = 3 * RRtimeFactor;
-		int RR5ProcessTime = 5 * RRtimeFactor;
-		int RR10ProcessTime = 10 * RRtimeFactor;
+		int RR3ProcessTime = 1 * RRtimeFactor;
+		int RR5ProcessTime = 1 * RRtimeFactor;
+		int RR10ProcessTime = 1 * RRtimeFactor;
 
 		//Time limit before process is moved down into next processor
 		int STRtimeLimit = timeLimitFactor;
@@ -335,10 +335,10 @@ int main() {
 		processorUtilization;
 
 		//OUTPUT DATA HERE
-		printToExcel(outdata, timeLimitFactor, avgTurnaround, avgWaitTime, avgResponse);
+		printToExcel(outdata, RRtimeFactor, avgTurnaround, avgWaitTime, avgResponse);
 
 
-		contextSwitch += 10;
+		RRtimeFactor += 5;
 	}
 
 	
